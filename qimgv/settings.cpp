@@ -537,7 +537,7 @@ void Settings::setPanelEnabled(bool mode) {
 }
 //------------------------------------------------------------------------------
 bool Settings::panelFullscreenOnly() {
-    return settings->settingsConf->value("panelFullscreenOnly", true).toBool();
+    return settings->settingsConf->value("panelFullscreenOnly", false).toBool();
 }
 
 void Settings::setPanelFullscreenOnly(bool mode) {
