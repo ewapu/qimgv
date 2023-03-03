@@ -1,4 +1,7 @@
 #include "settings.h"
+#ifdef _WIN32
+#include <processenv.h>
+#endif
 
 Settings *settings = nullptr;
 
@@ -290,7 +293,10 @@ QString Settings::mpvBinary() {
     QString mpvPath = settings->settingsConf->value("mpvBinary", "").toString();
     if(!QFile::exists(mpvPath)) {
     #ifdef _WIN32
-        mpvPath = QCoreApplication::applicationDirPath() + "/mpv.exe";
+        char path[260]; // max path length on win
+        // search in application dir first, then system PATH
+        if (SearchPathA(NULL, "mpv.exe", NULL, 260, path, nullptr))
+            mpvPath = QString::fromLocal8Bit(path);
     #elif defined __linux__
         mpvPath = "/usr/bin/mpv";
     #endif
