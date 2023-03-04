@@ -1,5 +1,7 @@
 #!/bin/bash
-# This packages the built binaries with all their dll dependencies
+# This packages the built binaries with all their dll dependencies.
+# Adjust line 12 when building locally!
+set -e # exit on any failure
 
 SCRIPTS_DIR=$(dirname $(readlink -f $0)) # this file's location (/path/to/qimgv/scripts)
 SRC_DIR=$(dirname $SCRIPTS_DIR)
@@ -40,8 +42,8 @@ cd $MSYS_DIR/bin
 cp $MSYS_DLLS $PACKAGE_DIR
 
 # 4 - copy imageformats
-cp $EXT_DIR/qt-jpegxl-image-plugin/build/bin/imageformats/libqjpegxl5.dll $PACKAGE_DIR/imageformats
-cp $EXT_DIR/qt-avif-image-plugin/build/bin/imageformats/libqavif5.dll $PACKAGE_DIR/imageformats
+cp $EXT_DIR/qt-jpegxl-image-plugin/build/bin/imageformats/libqjpegxl*.dll $PACKAGE_DIR/imageformats
+cp $EXT_DIR/qt-avif-image-plugin/build/bin/imageformats/libqavif*.dll $PACKAGE_DIR/imageformats
 cp $EXT_DIR/qt-heif-image-plugin/build/bin/imageformats/libqheif.dll $PACKAGE_DIR/imageformats
 cp $EXT_DIR/QtApng/build/plugins/imageformats/qapng.dll $PACKAGE_DIR/imageformats
 cp $EXT_DIR/qtraw/build/src/imageformats/qtraw.dll $PACKAGE_DIR/imageformats

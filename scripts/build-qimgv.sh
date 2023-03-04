@@ -1,5 +1,6 @@
 #!/bin/bash
 # This installs dependencies and builds qimgv 
+set -e # exit on any failure
 
 #CFL='-ffunction-sections -fdata-sections -march=native -mtune=native -O3 -pipe'
 CFL='-ffunction-sections -fdata-sections -O3 -pipe'
