@@ -16,6 +16,7 @@ static void *get_proc_address(void *ctx, const char *name) {
 MpvWidget::MpvWidget(QWidget *parent, Qt::WindowFlags f)
     : QOpenGLWidget(parent, f)
 {
+    std::setlocale(LC_NUMERIC, "C");
     mpv = mpv_create();
     if(!mpv)
         throw std::runtime_error("could not create mpv context");
@@ -54,6 +55,10 @@ MpvWidget::~MpvWidget() {
 
 void MpvWidget::command(const QVariant& params) {
     mpv::qt::command(mpv, params);
+}
+
+int MpvWidget::command_s(const QString& params) {
+    return mpv::qt::command_s(mpv, params);
 }
 
 void MpvWidget::setProperty(const QString& name, const QVariant& value) {

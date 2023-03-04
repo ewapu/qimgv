@@ -21,6 +21,8 @@ public:
     ~MpvWidget() override;
 
     void command(const QVariant& params);
+    int command_s(const QString& params);
+
     void setOption(const QString &name, const QVariant &value);
     void setProperty(const QString& name, const QVariant& value);
     QVariant getProperty(const QString& name) const;

@@ -345,6 +345,11 @@ static inline QVariant command(mpv_handle *ctx, const QVariant &args)
     return node_to_variant(&res);
 }
 
+static inline int command_s(mpv_handle *ctx, const QString &arg)
+{
+    return mpv_command_string(ctx, arg.toUtf8().data());
+}
+
 }
 }
 

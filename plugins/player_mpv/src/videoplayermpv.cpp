@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QFileDialog>
 
+
 // TODO: window flashes white when opening a video (straight from file manager)
 VideoPlayerMpv::VideoPlayerMpv(QWidget *parent) : VideoPlayer(parent) {
     setAttribute(Qt::WA_TranslucentBackground, true);
