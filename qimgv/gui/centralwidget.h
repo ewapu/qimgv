@@ -4,9 +4,10 @@
 #include "gui/folderview/folderviewproxy.h"
 #include "gui/viewers/documentwidget.h"
 #include "settings.h"
+#include <QSplitter>
 
 
-class CentralWidget : public QStackedWidget
+class CentralWidget : public QSplitter
 {
     Q_OBJECT
 public:
