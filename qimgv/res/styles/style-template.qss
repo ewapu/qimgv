@@ -780,7 +780,7 @@ FolderView QTreeView::item:selected:active {
     border-color: %folderview_hc2%;
 }
 
-QTreeView::branch {
+QTreeView {
     padding-left: 6px;
 }
 

@@ -468,7 +468,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>260</width>
+           <width>170</width>
            <height>0</height>
           </size>
          </property>
@@ -687,6 +687,9 @@
             </property>
             <property name="sizeAdjustPolicy">
              <enum>QAbstractScrollArea::AdjustToContents</enum>
+            </property>
+            <property name="indentation">
+             <number>10</number>
             </property>
             <property name="uniformRowHeights">
              <bool>true</bool>

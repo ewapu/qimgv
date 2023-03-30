@@ -16,6 +16,8 @@ FileSystemModelCustom::FileSystemModelCustom(QObject *parent) : QFileSystemModel
 QVariant FileSystemModelCustom::data( const QModelIndex& index, int role ) const {
     if(role == Qt::DecorationRole)
         return folderIcon;
+    else if(role == Qt::SizeHintRole)
+        return QSize(0, 22); // row height
     return QFileSystemModel::data(index, role);
 }
 
