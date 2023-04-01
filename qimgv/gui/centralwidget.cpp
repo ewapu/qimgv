@@ -12,6 +12,16 @@ CentralWidget::CentralWidget(std::shared_ptr<DocumentWidget> _docWidget, std::sh
     if(folderView)
         addWidget(folderView.get());
     addWidget(documentView.get());
+
+    auto updateStyle = [this]() {
+        auto color = settings->colorScheme().folderview_hc.name();
+        if (handle(1))
+            handle(1)->setStyleSheet("background-color: " + color + ";");
+    };
+    connect(settings, &Settings::settingsChanged, updateStyle);
+    updateStyle();
+
+    setSizes(QList({100,100}));
     showDocumentView();
 }
 
