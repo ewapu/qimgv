@@ -49,11 +49,11 @@ zlib1.dll
 libSvtAv1Enc.dll
 libyuv.dll
 libmpv-*.dll
-Qt5Core.dll
-Qt5Gui.dll
-Qt5PrintSupport.dll
-Qt5Svg.dll
-Qt5Widgets.dll
+Qt*Core.dll
+Qt*Gui.dll
+Qt*PrintSupport.dll
+Qt*Svg.dll
+Qt*Widgets.dll
 libopencv_core*.dll
 libopencv_imgproc*.dll
 mpv.exe

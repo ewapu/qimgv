@@ -2,6 +2,8 @@
 # This installs dependencies and builds qimgv 
 set -e # exit on any failure
 
+# cmake -S . -B build\ -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_BUILD_TYPE=Release -DOPENCV_SUPPORT=ON -DVIDEO_SUPPORT=ON -DCMAKE_CXX_FLAGS="-ffunction-sections -fdata-sections -O3 -pipe" -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" --fresh
+
 #CFL='-ffunction-sections -fdata-sections -march=native -mtune=native -O3 -pipe'
 CFL='-ffunction-sections -fdata-sections -O3 -pipe'
 LDFL='-Wl,--gc-sections'
