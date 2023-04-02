@@ -17,12 +17,11 @@ public:
 signals:
 
 public slots:
-    void showDocumentView();
-    void showFolderView();
-    void toggleViewMode();
-
+    void setMode(ViewMode new_mode);
 private:
     std::shared_ptr<DocumentWidget> documentView;
     std::shared_ptr<FolderViewProxy> folderView;
+
+    QByteArray splitterState;
     ViewMode mode;
 };

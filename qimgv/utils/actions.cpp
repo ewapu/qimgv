@@ -60,7 +60,6 @@ void Actions::init() {
     mActions.insert("frameStepBack", QVersionNumber(0,6,85));
     mActions.insert("folderView", QVersionNumber(0,6,85));
     mActions.insert("documentView", QVersionNumber(0,6,88));
-    mActions.insert("toggleFolderView", QVersionNumber(0,6,88));
     mActions.insert("moveToTrash", QVersionNumber(0,6,89));
     mActions.insert("reloadImage", QVersionNumber(0,7,80));
     mActions.insert("copyFileClipboard", QVersionNumber(0,7,80));
@@ -90,5 +89,7 @@ void Actions::init() {
     mActions.insert("print", QVersionNumber(1,0,0));
     mActions.insert("toggleFullscreenInfoBar", QVersionNumber(1,0,0));
     mActions.insert("pasteFile", QVersionNumber(1,0,3));
+    mActions.insert("toggleFolderViewSplit", QVersionNumber(1,0,3));
+    mActions.insert("toggleDocumentViewSplit", QVersionNumber(1,0,3));
 }
 

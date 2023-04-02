@@ -175,9 +175,10 @@ void Core::initActions() {
     connect(actionManager, &ActionManager::seekVideoBackward, mw, &MW::seekVideoBackward);
     connect(actionManager, &ActionManager::frameStep, mw, &MW::frameStep);
     connect(actionManager, &ActionManager::frameStepBack, mw, &MW::frameStepBack);
-    connect(actionManager, &ActionManager::folderView, this, &Core::enableFolderView);
-    connect(actionManager, &ActionManager::documentView, this, &Core::enableDocumentView);
-    connect(actionManager, &ActionManager::toggleFolderView, this, &Core::toggleFolderView);
+    connect(actionManager, &ActionManager::folderView, this, &Core::enableFolderViewExc);
+    connect(actionManager, &ActionManager::documentView, this, &Core::enableDocumentViewExc);
+    connect(actionManager, &ActionManager::toggleFolderViewSplit, this, &Core::toggleFolderViewSplit);
+    connect(actionManager, &ActionManager::toggleDocumentViewSplit, this, &Core::toggleDocumentViewSplit);
     connect(actionManager, &ActionManager::reloadImage, this, qOverload<>(&Core::reloadImage));
     connect(actionManager, &ActionManager::copyFileClipboard, this, &Core::copyFileClipboard);
     connect(actionManager, &ActionManager::copyPathClipboard, this, &Core::copyPathClipboard);
@@ -289,7 +290,7 @@ void Core::startSlideshow() {
     if(!slideshow) {
         slideshow = true;
         mw->setLoopPlayback(false);
-        enableDocumentView();
+        enableDocumentView(false);
         startSlideshowTimer();
         updateInfoString();
     }
@@ -329,7 +330,7 @@ void Core::onModelLoaded() {
 
 void Core::onDirectoryViewFileActivated(QString filePath) {
     // we aren`t using async load so it won't flicker with empty view
-    mw->enableDocumentView();
+    enableDocumentView(false);
     loadPath(filePath);
 }
 
@@ -419,17 +420,38 @@ void Core::reloadImage(QString filePath) {
     model->reload(filePath);
 }
 
-void Core::enableFolderView() {
-    if(mw->currentViewMode() == MODE_FOLDERVIEW)
-        return;
-    stopSlideshow();
-    mw->enableFolderView();
+void Core::enableFolderViewExc() {
+    enableFolderView(true);
 }
 
-void Core::enableDocumentView() {
-    if(mw->currentViewMode() == MODE_DOCUMENT)
+void Core::enableFolderView(bool forceExclusive) {
+    ViewMode new_mode, mode = mw->currentViewMode();
+    if (forceExclusive || mode == MODE_FOLDERVIEW)
+        new_mode = MODE_FOLDERVIEW;
+    else
+        new_mode = settings->splitView() ? MODE_SPLIT : MODE_FOLDERVIEW;
+    if (mode == new_mode)
         return;
-    mw->enableDocumentView();
+    if (new_mode != MODE_SPLIT)
+        stopSlideshow();
+    mw->setViewMode(new_mode);
+}
+
+void Core::enableDocumentViewExc() {
+    enableDocumentView(true);
+}
+
+void Core::enableDocumentView(bool forceExclusive) {
+    ViewMode new_mode, mode = mw->currentViewMode();
+    if (forceExclusive || mode == MODE_DOCUMENT)
+        new_mode = MODE_DOCUMENT;
+    else
+        new_mode = settings->splitView() ? MODE_SPLIT : MODE_DOCUMENT;
+    if (mode == new_mode)
+        return;
+    mw->setViewMode(new_mode);
+
+    // make sure some file is loaded
     if(model && model->fileCount() && state.currentFilePath == "") {
         auto selected = folderViewPresenter.selectedPaths().first();
         // if it is a directory - ignore and just open the first file
@@ -440,11 +462,26 @@ void Core::enableDocumentView() {
     }
 }
 
-void Core::toggleFolderView() {
-    if(mw->currentViewMode() == MODE_FOLDERVIEW)
-        enableDocumentView();
-    else
-        enableFolderView();
+void Core::toggleDocumentViewSplit() {
+    switch (mw->currentViewMode()) {
+        case MODE_FOLDERVIEW:
+            enableDocumentView(false); break;
+        case MODE_SPLIT:
+            enableFolderView(true); break;
+        default:
+            return;
+    }
+}
+
+void Core::toggleFolderViewSplit() {
+    switch (mw->currentViewMode()) {
+        case MODE_DOCUMENT:
+            enableFolderView(false); break;
+        case MODE_SPLIT:
+            enableDocumentView(true); break;
+        default:
+            return;
+    }
 }
 
 // TODO: also copy selection from folder view?
@@ -1245,10 +1282,18 @@ bool Core::loadPath(QString path) {
                 }
             }
         }
-        mw->enableDocumentView();
-        return loadFileIndex(index, false, settings->usePreloader());
+        auto r = loadFileIndex(index, false, settings->usePreloader());
+        if (mw->currentViewMode() == MODE_INIT)
+            enableDocumentView(true);
+        else
+            enableDocumentView(false);
+        return r;
     } else {
-        mw->enableFolderView();
+        if (mw->currentViewMode() == MODE_INIT)
+            enableFolderView(true);
+        else
+            enableFolderView(false);
+
         return true;
     }
 }

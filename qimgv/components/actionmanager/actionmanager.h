@@ -95,7 +95,8 @@ signals:
     void seekVideoBackward();
     void frameStep();
     void frameStepBack();
-    void toggleFolderView();
+    void toggleFolderViewSplit();
+    void toggleDocumentViewSplit();
     void moveToTrash();
     void reloadImage();
     void copyFileClipboard();

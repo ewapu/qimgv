@@ -163,9 +163,8 @@ private slots:
     void showInDirectory();
     void onDirectoryViewFileActivated(QString filePath);
     bool loadFileIndex(int index, bool async, bool preload);
-    void enableDocumentView();
-    void enableFolderView();
-    void toggleFolderView();
+    void enableDocumentView(bool forceExclusive);
+    void enableFolderView(bool forceExclusive);
     void toggleSlideshow();
     void onPlaybackFinished();
     void setFoldersDisplay(bool mode);
@@ -175,4 +174,9 @@ private slots:
     void prevDirectory();
     void print();
     void modelDelayLoad();
+
+    void toggleDocumentViewSplit();
+    void toggleFolderViewSplit();
+    void enableDocumentViewExc();
+    void enableFolderViewExc();
 };

@@ -60,7 +60,7 @@ MW::MW(QWidget *parent)
 void MW::setupUi() {
     viewerWidget.reset(new ViewerWidget(this));
     infoBarWindowed.reset(new InfoBarProxy(this));
-    docWidget.reset(new DocumentWidget(viewerWidget, infoBarWindowed));
+    docWidget.reset(new DocumentWidget(viewerWidget, infoBarWindowed, this));
     folderView.reset(new FolderViewProxy(this));
     connect(folderView.get(), &FolderViewProxy::sortingSelected, this, &MW::sortingSelected);
     connect(folderView.get(), &FolderViewProxy::directorySelected, this, &MW::opened);
@@ -140,32 +140,17 @@ void MW::setupRenameOverlay() {
     connect(renameOverlay, &RenameOverlay::renameRequested, this, &MW::renameRequested);
 }
 
-void MW::toggleFolderView() {
-    hideCropPanel();
-    if(copyOverlay)
-        copyOverlay->hide();
-    if(renameOverlay)
-        renameOverlay->hide();
-    docWidget->hideFloatingPanel();
-    imageInfoOverlay->hide();
-    centralWidget->toggleViewMode();
-    onInfoUpdated();
-}
-
-void MW::enableFolderView() {
-    hideCropPanel();
-    if(copyOverlay)
-        copyOverlay->hide();
-    if(renameOverlay)
-        renameOverlay->hide();
-    docWidget->hideFloatingPanel();
-    imageInfoOverlay->hide();
-    centralWidget->showFolderView();
-    onInfoUpdated();
-}
-
-void MW::enableDocumentView() {
-    centralWidget->showDocumentView();
+void MW::setViewMode(ViewMode mode) {
+    if (mode != MODE_DOCUMENT && mode != MODE_SPLIT) {
+        hideCropPanel();
+        if(copyOverlay)
+            copyOverlay->hide();
+        if(renameOverlay)
+            renameOverlay->hide();
+        docWidget->hideFloatingPanel();
+        imageInfoOverlay->hide();
+    }
+    centralWidget->setMode(mode);
     onInfoUpdated();
 }
 
@@ -913,7 +898,7 @@ void MW::adaptToWindowState() {
         if(showInfoBarFullscreen)
             infoBarFullscreen->showWhenReady();
         else
-            infoBarFullscreen->hide();    
+            infoBarFullscreen->hide();
 
         auto pos = settings->panelPosition();
         if(!settings->panelEnabled() || pos == PANEL_BOTTOM || pos == PANEL_LEFT)

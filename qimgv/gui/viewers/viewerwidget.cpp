@@ -101,6 +101,7 @@ void ViewerWidget::enableImageViewer() {
 void ViewerWidget::enableVideoPlayer() {
     if(currentWidget != VIDEOPLAYER) {
         disableImageViewer();
+
         videoControls->setMode(PLAYBACK_VIDEO);
         connect(videoPlayer.get(), &VideoPlayer::durationChanged, videoControls, &VideoControlsProxyWrapper::setPlaybackDuration);
         connect(videoPlayer.get(), &VideoPlayer::positionChanged, videoControls, &VideoControlsProxyWrapper::setPlaybackPosition);

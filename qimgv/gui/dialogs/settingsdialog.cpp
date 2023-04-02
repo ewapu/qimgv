@@ -216,6 +216,8 @@ void SettingsDialog::readSettings() {
     ui->useFixedZoomLevelsCheckBox->setChecked(settings->useFixedZoomLevels());
     ui->zoomLevels->setText(settings->zoomLevels());
 
+    ui->splitViewCheckBox->setChecked(settings->splitView());
+
     if(settings->defaultViewMode() == MODE_FOLDERVIEW)
         ui->startInFolderViewCheckBox->setChecked(true);
     else
@@ -364,6 +366,8 @@ void SettingsDialog::saveSettings() {
     settings->setPanelCenterSelection(ui->panelCenterSelectionCheckBox->isChecked());
     settings->setUseFixedZoomLevels(ui->useFixedZoomLevelsCheckBox->isChecked());
     settings->setZoomLevels(ui->zoomLevels->text());
+
+    settings->setSplitView(ui->splitViewCheckBox->isChecked());
 
     settings->setPanelPinned(ui->pinPanelCheckBox->isChecked());
     int panelPos = ui->panelPositionComboBox->currentIndex();

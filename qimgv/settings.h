@@ -75,7 +75,9 @@ enum ImageScrolling {
 
 enum ViewMode {
     MODE_DOCUMENT,
-    MODE_FOLDERVIEW
+    MODE_FOLDERVIEW,
+    MODE_SPLIT,
+    MODE_INIT, //
 };
 
 enum FolderEndAction {
@@ -293,6 +295,9 @@ public:
     void setUseFixedZoomLevels(bool mode);
     bool unlockMinZoom();
     void setUnlockMinZoom(bool mode);
+
+    bool splitView();
+    void setSplitView(bool mode);
 
 private:
     explicit Settings(QObject *parent = nullptr);

@@ -3,7 +3,9 @@
 CentralWidget::CentralWidget(std::shared_ptr<DocumentWidget> _docWidget, std::shared_ptr<FolderViewProxy> _folderView, QWidget *parent)
     : QSplitter(parent),
       documentView(_docWidget),
-      folderView(_folderView)
+      folderView(_folderView),
+      mode(MODE_INIT),
+      splitterState()
 {
     setMouseTracking(true);
     if(!documentView || !folderView)
@@ -21,29 +23,40 @@ CentralWidget::CentralWidget(std::shared_ptr<DocumentWidget> _docWidget, std::sh
     connect(settings, &Settings::settingsChanged, updateStyle);
     updateStyle();
 
-    setSizes(QList({100,100}));
-    showDocumentView();
-}
+    setSizes(QList({0,0}));
 
-void CentralWidget::showDocumentView() {
-    if(mode == MODE_DOCUMENT)
-        return;
-    mode = MODE_DOCUMENT;
+    folderView->show();
     documentView->show();
-    documentView->viewWidget()->startPlayback();
 }
 
-void CentralWidget::showFolderView() {
-    if(mode == MODE_FOLDERVIEW)
+void CentralWidget::setMode(ViewMode new_mode) {
+    if (mode == new_mode)
         return;
+    if (mode == MODE_SPLIT)
+        splitterState = this->saveState();
 
-    mode = MODE_FOLDERVIEW;
-    documentView->hide();
-    documentView->viewWidget()->stopPlayback();
-}
-
-void CentralWidget::toggleViewMode() {
-    (mode == MODE_DOCUMENT) ? showFolderView() : showDocumentView();
+    switch (new_mode) {
+    case MODE_DOCUMENT:
+        setSizes({0,200});
+        if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
+            documentView->viewWidget()->startPlayback();
+        break;
+    case MODE_FOLDERVIEW:
+        documentView->viewWidget()->stopPlayback();
+        setSizes({200,0});
+        break;
+    case MODE_SPLIT:
+        if (splitterState.isEmpty())
+            setSizes({200,200});
+        else
+            this->restoreState(splitterState);
+        if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
+            documentView->viewWidget()->startPlayback();
+        break;
+    case MODE_INIT:
+        assert(false);
+    }
+    mode = new_mode;
 }
 
 ViewMode CentralWidget::currentViewMode() {

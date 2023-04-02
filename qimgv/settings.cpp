@@ -1145,3 +1145,12 @@ bool Settings::unlockMinZoom() {
 void Settings::setUnlockMinZoom(bool mode) {
     settings->settingsConf->setValue("unlockMinZoom", mode);
 }
+//------------------------------------------------------------------------------
+
+bool Settings::splitView() {
+    return settings->settingsConf->value("splitView", false).toBool();
+}
+
+void Settings::setSplitView(bool mode) {
+    settings->settingsConf->setValue("splitView", mode);
+}

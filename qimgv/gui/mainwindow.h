@@ -203,9 +203,6 @@ public slots:
     void showDefault();
     void showCropPanel();
     void hideCropPanel();
-    void toggleFolderView();
-    void enableFolderView();
-    void enableDocumentView();
     void showOpenDialog(QString path);
     void showSaveDialog(QString filePath);
     QString getSaveFileName(QString fileName);
@@ -251,4 +248,7 @@ public slots:
     void toggleLockZoom();
     void toggleLockView();
     void toggleFullscreenInfoBar();
+
+
+    void setViewMode(ViewMode mode);
 };
