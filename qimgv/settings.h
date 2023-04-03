@@ -299,6 +299,9 @@ public:
     bool splitView();
     void setSplitView(bool mode);
 
+    bool singleClickMode();
+    void setSingleClickMode(bool mode);
+
 private:
     explicit Settings(QObject *parent = nullptr);
     QSettings *settingsConf, *stateConf, *themeConf;
@@ -317,7 +320,6 @@ signals:
 
 public slots:
     void sendChangeNotification();
-
 };
 
 extern Settings *settings;
