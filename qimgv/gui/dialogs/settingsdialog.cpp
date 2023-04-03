@@ -217,7 +217,6 @@ void SettingsDialog::readSettings() {
     ui->zoomLevels->setText(settings->zoomLevels());
 
     ui->splitViewCheckBox->setChecked(settings->splitView());
-    ui->selectModeCheckBox->setChecked(settings->singleClickMode());
 
     if(settings->defaultViewMode() == MODE_FOLDERVIEW)
         ui->startInFolderViewCheckBox->setChecked(true);
@@ -368,6 +367,8 @@ void SettingsDialog::saveSettings() {
     settings->setUseFixedZoomLevels(ui->useFixedZoomLevelsCheckBox->isChecked());
     settings->setZoomLevels(ui->zoomLevels->text());
 
+    settings->setSplitView(ui->splitViewCheckBox->isChecked());
+
     settings->setPanelPinned(ui->pinPanelCheckBox->isChecked());
     int panelPos = ui->panelPositionComboBox->currentIndex();
     settings->setPanelPosition(static_cast<PanelPosition>(panelPos));
@@ -382,9 +383,6 @@ void SettingsDialog::saveSettings() {
     settings->setMemoryAllocationLimit(ui->memoryLimitSpinBox->value());
 
     settings->setUseSystemColorScheme(ui->useSystemColorsCheckBox->isChecked());
-
-    settings->setSplitView(ui->splitViewCheckBox->isChecked());
-    settings->setSingleClickMode(ui->selectModeCheckBox->isChecked());
 
     saveColorScheme();
     saveShortcuts();

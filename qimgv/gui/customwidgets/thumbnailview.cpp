@@ -8,6 +8,7 @@ ThumbnailView::ThumbnailView(Qt::Orientation _orientation, QWidget *parent)
       mDrawScrollbarIndicator(true),
       mThumbnailSize(120),
       rangeSelection(false),
+      selectMode(ACTIVATE_BY_PRESS),
       lastScrollFrameTime(0),
       scrollTimeLine(nullptr)
 {
@@ -634,7 +635,7 @@ void ThumbnailView::mousePressEvent(QMouseEvent *event) {
             } else if(event->modifiers() & Qt::ShiftModifier) {
                 addSelectionRange(index);
             } else if (selection().count() <= 1) {
-                if(settings->singleClickMode()) {
+                if(selectMode == ACTIVATE_BY_PRESS) {
                     emit itemActivated(index);
                     return;
                 } else {
@@ -705,4 +706,8 @@ void ThumbnailView::keyReleaseEvent(QKeyEvent *event) {
 void ThumbnailView::resizeEvent(QResizeEvent *event) {
     QGraphicsView::resizeEvent(event);
     updateScrollbarIndicator();
+}
+
+void ThumbnailView::setSelectMode(ThumbnailSelectMode mode) {
+    selectMode = mode;
 }

@@ -22,6 +22,11 @@
 #include "gui/idirectoryview.h"
 #include "shortcutbuilder.h"
 
+enum ThumbnailSelectMode {
+    ACTIVATE_BY_PRESS,
+    ACTIVATE_BY_DOUBLECLICK
+};
+
 enum ScrollDirection {
     SCROLL_FORWARDS,
     SCROLL_BACKWARDS
@@ -38,6 +43,7 @@ public:
     QList<int> selection() override;
     int itemCount();
 
+    void setSelectMode(ThumbnailSelectMode mode);
     int lastSelected();
     void clearSelection();
     void deselect(int index);
@@ -76,6 +82,7 @@ private:
     QList<int> mSelection;
 
     bool mCropThumbnails, mouseReleaseSelect;
+    ThumbnailSelectMode selectMode;
     QPoint dragStartPos;
     ThumbnailWidget* dragTarget;
 

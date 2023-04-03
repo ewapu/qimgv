@@ -1154,13 +1154,3 @@ bool Settings::splitView() {
 void Settings::setSplitView(bool mode) {
     settings->settingsConf->setValue("splitView", mode);
 }
-
-//------------------------------------------------------------------------------
-
-bool Settings::singleClickMode() {
-    return settings->settingsConf->value("singleClickMode", false).toBool();
-}
-
-void Settings::setSingleClickMode(bool mode) {
-    settings->settingsConf->setValue("singleClickMode", mode);
-}
