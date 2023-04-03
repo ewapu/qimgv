@@ -385,3 +385,13 @@ void FolderView::resizeEvent(QResizeEvent *event) {
         ui->topBar->layout()->invalidate();
     }
 }
+
+// needed because for some retarded reason, the built in version will fix it to the widgets _current_ size
+// upon calling qApp->setStyleSheet()
+QSize FolderView::minimumSizeHint () const {
+    auto* top = this->findChild<QWidget*>("topBar");
+    QSize def = QWidget::minimumSizeHint();
+    if (top)
+        def.setWidth(top->minimumSizeHint().width());
+    return def;
+}

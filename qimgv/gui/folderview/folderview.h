@@ -44,6 +44,7 @@ public slots:
     void addItem();
     void onFullscreenModeChanged(bool mode);
     void onSortingChanged(SortingMode mode);
+    QSize minimumSizeHint () const;
 
 
 protected:

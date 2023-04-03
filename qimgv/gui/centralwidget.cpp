@@ -35,19 +35,20 @@ void CentralWidget::setMode(ViewMode new_mode) {
     if (mode == MODE_SPLIT)
         splitterState = this->saveState();
 
+    int val = 1000;
     switch (new_mode) {
     case MODE_DOCUMENT:
-        setSizes({0,200});
+        setSizes({0,val});
         if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
             documentView->viewWidget()->startPlayback();
         break;
     case MODE_FOLDERVIEW:
         documentView->viewWidget()->stopPlayback();
-        setSizes({200,0});
+        setSizes({val,0});
         break;
     case MODE_SPLIT:
         if (splitterState.isEmpty())
-            setSizes({200,200});
+            setSizes({val,val});
         else
             this->restoreState(splitterState);
         if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
