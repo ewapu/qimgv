@@ -122,139 +122,6 @@ void FolderGridView::selectAll() {
     select(list);
 }
 
-void FolderGridView::selectAbove() {
-    if(!thumbnails.count() || lastSelected() == -1 || flowLayout->sameRow(0, lastSelected()))
-        return;
-    int newIndex;
-    newIndex = flowLayout->itemAbove(lastSelected());
-    if(shiftedCol >= 0) {
-        int diff = shiftedCol - flowLayout->columnOf(lastSelected());
-        newIndex += diff;
-        shiftedCol = -1;
-    }
-    if(!checkRange(newIndex))
-        newIndex = 0;
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::selectBelow() {
-    if(!thumbnails.count() || lastSelected() == -1 || flowLayout->sameRow(lastSelected(), thumbnails.count() - 1))
-        return;
-    shiftedCol = -1;
-    int newIndex = flowLayout->itemBelow(lastSelected());
-    if(!checkRange(newIndex))
-        newIndex = thumbnails.count() - 1;
-    if(flowLayout->columnOf(newIndex) != flowLayout->columnOf(lastSelected()))
-        shiftedCol = flowLayout->columnOf(lastSelected());
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::selectNext() {
-    if(!thumbnails.count() || lastSelected() == thumbnails.count() - 1)
-        return;
-    if(!rangeSelection && lastSelected() == thumbnails.count() - 1) {
-        select(lastSelected());
-        return;
-    }
-    shiftedCol = -1;
-    int newIndex = lastSelected() + 1;
-    if(!checkRange(newIndex))
-        newIndex = thumbnails.count() - 1;
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::selectPrev() {
-    if(!thumbnails.count() || lastSelected() == 0)
-        return;
-    shiftedCol = -1;
-    int newIndex = lastSelected() - 1;
-    if(!checkRange(newIndex))
-        newIndex = 0;
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::pageUp() {
-    if(!thumbnails.count() || lastSelected() == -1 || flowLayout->sameRow(0, lastSelected()))
-        return;
-    int newIndex = lastSelected();
-    int tmp;
-    // 4 rows up
-    for(int i = 0; i < 4; i++) {
-        tmp = flowLayout->itemAbove(newIndex);
-        if(checkRange(tmp))
-            newIndex = tmp;
-    }
-    if(shiftedCol >= 0) {
-        int diff = shiftedCol - flowLayout->columnOf(newIndex);
-        newIndex += diff;
-        shiftedCol = -1;
-    }
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::pageDown() {
-    if(!thumbnails.count() || lastSelected() == -1 || flowLayout->sameRow(lastSelected(), thumbnails.count() - 1))
-        return;
-    shiftedCol = -1;
-    int newIndex = lastSelected();
-    int tmp;
-    // 4 rows down
-    for(int i = 0; i < 4; i++) {
-        tmp = flowLayout->itemBelow(newIndex);
-        if(checkRange(tmp))
-            newIndex = tmp;
-    }
-    if(flowLayout->columnOf(newIndex) != flowLayout->columnOf(lastSelected()))
-        shiftedCol = flowLayout->columnOf(lastSelected());
-    if(rangeSelection)
-        addSelectionRange(newIndex);
-    else
-        select(newIndex);
-    scrollToCurrent();
-}
-
-void FolderGridView::selectFirst() {
-    if(!thumbnails.count())
-        return;
-    shiftedCol = -1;
-    if(rangeSelection)
-        addSelectionRange(0);
-    else
-        select(0);
-    scrollToCurrent();
-}
-
-void FolderGridView::selectLast() {
-    if(!thumbnails.count())
-        return;
-    shiftedCol = -1;
-    if(rangeSelection)
-        addSelectionRange(thumbnails.count() - 1);
-    else
-        select(thumbnails.count() - 1);
-    scrollToCurrent();
-}
-
 void FolderGridView::scrollToCurrent() {
     scrollToItem(lastSelected());
 }
@@ -338,34 +205,112 @@ void FolderGridView::keyPressEvent(QKeyEvent *event) {
     }
 
     // handle selection
+
+    if(!thumbnails.count())
+        return;
+    int newIndex;
+
     switch (event->key()) {
     case Qt::Key_Left:
-        selectPrev();
+        if(lastSelected() == 0)
+            return;
+        shiftedCol = -1;
+        newIndex = lastSelected() - 1;
+        if(!checkRange(newIndex))
+            newIndex = 0;
         break;
+
     case Qt::Key_Right:
-        selectNext();
+        if(lastSelected() == thumbnails.count() - 1)
+            return;
+        if(!rangeSelection && lastSelected() == thumbnails.count() - 1) {
+            select(lastSelected());
+            return;
+        }
+        shiftedCol = -1;
+        newIndex = lastSelected() + 1;
+        if(!checkRange(newIndex))
+            newIndex = thumbnails.count() - 1;
         break;
+
     case Qt::Key_Up:
-        selectAbove();
+        if(lastSelected() == -1 || flowLayout->sameRow(0, lastSelected()))
+            return;
+        newIndex = flowLayout->itemAbove(lastSelected());
+        if(shiftedCol >= 0) {
+            int diff = shiftedCol - flowLayout->columnOf(lastSelected());
+            newIndex += diff;
+            shiftedCol = -1;
+        }
+        if(!checkRange(newIndex))
+            newIndex = 0;
         break;
+
     case Qt::Key_Down:
-        selectBelow();
+        if(lastSelected() == -1 || flowLayout->sameRow(lastSelected(), thumbnails.count() - 1))
+            return;
+        shiftedCol = -1;
+        newIndex = flowLayout->itemBelow(lastSelected());
+        if(!checkRange(newIndex))
+            newIndex = thumbnails.count() - 1;
+        if(flowLayout->columnOf(newIndex) != flowLayout->columnOf(lastSelected()))
+            shiftedCol = flowLayout->columnOf(lastSelected());
         break;
+
     case Qt::Key_PageUp:
-        pageUp();
+        if(lastSelected() == -1 || flowLayout->sameRow(0, lastSelected()))
+            return;
+        newIndex = lastSelected();
+        int tmp;
+        // 4 rows up
+        for(int i = 0; i < 4; i++) {
+            tmp = flowLayout->itemAbove(newIndex);
+            if(checkRange(tmp))
+                newIndex = tmp;
+        }
+        if(shiftedCol >= 0) {
+            int diff = shiftedCol - flowLayout->columnOf(newIndex);
+            newIndex += diff;
+            shiftedCol = -1;
+        }
         break;
+
     case Qt::Key_PageDown:
-        pageDown();
+        if(lastSelected() == -1 || flowLayout->sameRow(lastSelected(), thumbnails.count() - 1))
+            return;
+        shiftedCol = -1;
+        newIndex = lastSelected();
+        int tmp2;
+        // 4 rows down
+        for(int i = 0; i < 4; i++) {
+            tmp2 = flowLayout->itemBelow(newIndex);
+            if(checkRange(tmp2))
+                newIndex = tmp2;
+        }
+        if(flowLayout->columnOf(newIndex) != flowLayout->columnOf(lastSelected()))
+            shiftedCol = flowLayout->columnOf(lastSelected());
         break;
+
     case Qt::Key_Home:
-        selectFirst();
+        shiftedCol = -1;
+        newIndex = 0;
         break;
+
     case Qt::Key_End:
-        selectLast();
+        shiftedCol = -1;
+        newIndex = thumbnails.count() - 1;
         break;
+
     default:
         actionManager->processEvent(event);
+        return;
     }
+    if(rangeSelection)
+        addSelectionRange(newIndex);
+    else
+        emit itemActivated(newIndex);
+//        select(newIndex);
+    scrollToCurrent();
 }
 
 void FolderGridView::wheelEvent(QWheelEvent *event) {

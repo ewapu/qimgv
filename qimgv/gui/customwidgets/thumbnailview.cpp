@@ -635,12 +635,12 @@ void ThumbnailView::mousePressEvent(QMouseEvent *event) {
             } else if(event->modifiers() & Qt::ShiftModifier) {
                 addSelectionRange(index);
             } else if (selection().count() <= 1) {
-                if(selectMode == ACTIVATE_BY_PRESS) {
-                    emit itemActivated(index);
-                    return;
-                } else {
-                    select(index);
-                }
+                emit itemActivated(index);
+//                if(selectMode == ACTIVATE_BY_PRESS) {
+//                    return;
+//                } else {
+//                    select(index);
+//                }
             } else {
                 mouseReleaseSelect = true;
             }

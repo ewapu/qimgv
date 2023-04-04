@@ -22,15 +22,6 @@ public slots:
     void show();
     void hide();
 
-    void selectFirst();
-    void selectLast();
-    void pageUp();
-    void pageDown();
-    void selectAbove();
-    void selectBelow();
-    void selectNext();
-    void selectPrev();
-
     void zoomIn();
     void zoomOut();
     void setThumbnailSize(int newSize);
