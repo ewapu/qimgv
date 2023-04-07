@@ -452,6 +452,10 @@ void Core::enableDocumentView(bool forceExclusive) {
     mw->setViewMode(new_mode);
 
     // make sure some file is loaded
+    loadFirst();
+}
+
+void Core::loadFirst() {
     if(model && model->fileCount() && state.currentFilePath == "") {
         auto selected = folderViewPresenter.selectedPaths().first();
         // if it is a directory - ignore and just open the first file
@@ -1330,7 +1334,7 @@ bool Core::loadFileIndex(int index, bool async, bool preload) {
 }
 
 void Core::loadParentDir() {
-    if(model->directoryPath().isEmpty() || mw->currentViewMode() != MODE_FOLDERVIEW)
+    if(model->directoryPath().isEmpty() || mw->currentViewMode() == MODE_DOCUMENT || mw->currentViewMode() == MODE_INIT)
         return;
     stopSlideshow();
     QFileInfo currentDir(model->directoryPath());
@@ -1338,6 +1342,7 @@ void Core::loadParentDir() {
     if(parentDir.exists() && parentDir.isReadable())
         loadPath(parentDir.absoluteFilePath());
     folderViewPresenter.selectAndFocus(currentDir.absoluteFilePath());
+    loadFirst();
 }
 
 void Core::nextDirectory() {

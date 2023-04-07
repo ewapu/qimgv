@@ -179,4 +179,6 @@ private slots:
     void toggleFolderViewSplit();
     void enableDocumentViewExc();
     void enableFolderViewExc();
+
+    void loadFirst();
 };

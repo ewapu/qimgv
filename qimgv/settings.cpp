@@ -217,6 +217,7 @@ void Settings::loadStylesheet() {
             styleSheet.replace("%topbar_border_rgba%", colors.folderview.name());
 
         // --- apply -------------------------------------------------
+        qDebug() << "ABOUT TO APPLY";
         qApp->setStyleSheet(styleSheet);
     }
 }
