@@ -218,10 +218,10 @@ void DirectoryPresenter::generateThumbnails(QList<int> indexes, int size, bool c
 void DirectoryPresenter::onThumbnailReady(std::shared_ptr<Thumbnail> thumb, QString filePath) {
     if(!view || !model)
         return;
-    int index = model->indexOfFile(filePath);
+    int index = model->indexOfFile(std::move(filePath));
     if(index == -1)
         return;
-    view->setThumbnail(mShowDirs ? model->dirCount() + index : index, thumb);
+    view->setThumbnail(mShowDirs ? model->dirCount() + index : index, std::move(thumb));
 }
 
 void DirectoryPresenter::onItemActivated(int absoluteIndex) {

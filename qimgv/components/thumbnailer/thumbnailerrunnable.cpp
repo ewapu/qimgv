@@ -1,5 +1,7 @@
 #include "thumbnailerrunnable.h"
 
+#include <memory>
+
 ThumbnailerRunnable::ThumbnailerRunnable(ThumbnailCache* _cache, QString _path, int _size, bool _crop, bool _force) :
     path(_path),
     size(_size),
@@ -46,6 +48,10 @@ std::shared_ptr<Thumbnail> ThumbnailerRunnable::generate(ThumbnailCache* cache, 
             pair = createVideoThumbnail(path, size, crop);
         else
             pair = createThumbnail(imgInfo.filePath(), imgInfo.format().toStdString().c_str(), size, crop);
+
+        if (!pair.first)
+            return  std::make_shared<Thumbnail>(imgInfo.fileName(), "", size, nullptr);
+
         image.reset(pair.first);
         QSize originalSize = pair.second;
 
@@ -64,7 +70,7 @@ std::shared_ptr<Thumbnail> ThumbnailerRunnable::generate(ThumbnailCache* cache, 
         if(cache) {
             // save thumbnail if it makes sense
             // FIXME: avoid too much i/o
-            if(originalSize.width() > size || originalSize.height() > size)
+            if(originalSize.width() > size || originalSize.height() > size || imgInfo.type() == VIDEO)
                 cache->saveThumbnail(image.get(), thumbnailId);
         }
     }
@@ -155,50 +161,64 @@ std::pair<QImage*, QSize> ThumbnailerRunnable::createThumbnail(QString path, con
 
 std::pair<QImage*, QSize> ThumbnailerRunnable::createVideoThumbnail(QString path, int size, bool squared) {
     QFileInfo fi(path);
-    QImageReader reader;
     QString tmpFilePath = settings->tmpDir() + fi.fileName() + ".png";
     QString tmpFilePathEsc = tmpFilePath;
     tmpFilePathEsc.replace("%", "%%");
+
     QProcess process;
-    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.setProcessChannelMode(QProcess::SeparateChannels);
+    QString vf = "--vf=scale=w=%size%:h=%size%:force_original_aspect_ratio=decrease:flags=fast_bilinear" +
+                 QString(squared ? ",pad=w=%size%:h=%size%:x=-1:y=-1" : "") + QString(",format=rgb24");
+    vf.replace("%size%", QString::number(size));
     process.start(settings->mpvBinary(),
-                  QStringList() << "--start=30%"
-                                << "--frames=1"
-                                << "--aid=no"
-                                << "--sid=no"
-                                << "--no-config"
-                                << "--load-scripts=no"
-                                << "--no-terminal"
-                                << "--o=" + tmpFilePathEsc
-                                << path
-                  );
-    process.waitForFinished(8000);
-    process.close();
+                  QStringList()
+                          << "--start=15%"
+                          << "--frames=1"
+                          << "--aid=no"
+                          << "--sid=no"
+                          << "--no-config"
+                          << "--load-scripts=no"
+                          << "--quiet"
+                          << "--sws-fast=yes"
+                          << "--hr-seek=no"
+                          << "--hwdec=no"
+                          << "--vd-lavc-fast"
+                          << "--vd-lavc-software-fallback=1"
+                          << "--vd-lavc-skiploopfilter=all"
+                          << "--demuxer-readahead-secs=0"
+                          << "--demuxer-max-bytes=128KiB"
+                          << "--sws-scaler=fast-bilinear"
+                          << vf
+                          << "--of=image2" << "--ofopts=update=1"
+                          << "--ovc=rawvideo"
+                          << "--o=-"
+                          << path
+    );
 
-    reader.setFileName(tmpFilePath);
-    reader.setFormat("png");
-    Qt::AspectRatioMode ARMode = squared?
-                (Qt::KeepAspectRatioByExpanding):(Qt::KeepAspectRatio);
-    QImage *result = nullptr;
-
-    // scale & crop
-    QSize scaledSize = reader.size().scaled(size, size, ARMode);
-    reader.setScaledSize(scaledSize);
-    if(squared) {
-        QRect clip(0, 0, size, size);
-        QRect scaledRect(QPoint(0,0), scaledSize);
-        clip.moveCenter(scaledRect.center());
-        reader.setScaledClipRect(clip);
+    if (!process.waitForStarted()) {
+        qDebug() << "Failed to start mpv process.";
+        return std::make_pair(nullptr, *(new QSize()));
     }
-    QSize originalSize = reader.size();
-    result = new QImage(reader.read());
 
-    // force reader to close file so it can be deleted later
-    reader.setFileName("");
+    process.waitForFinished();
+    QByteArray sout = process.readAllStandardOutput();
+    QByteArray serr = process.readAllStandardError();
 
-    // remove temporary file
-    QFile tmpFile(tmpFilePath);
-    tmpFile.remove();
+    QRegularExpression reO(R"(\(.*? (\d+)x(\d+)( .*?fps\))?)");
+    QRegularExpression reN(R"(VO: \[lavc\] (\d+)x(\d+))");
+    QRegularExpressionMatch matchO = reO.match(serr);
+    QRegularExpressionMatch matchN = reN.match(serr);
+    if (!matchO.hasMatch() || !matchN.hasMatch()) {
+        qDebug() << "Didn’t find video sizes in stderr " << !matchN.hasMatch();
+        qDebug() << serr;
+        qDebug() << path;
+        return std::make_pair(nullptr, *(new QSize()));
+    }
+    int Owidth = matchO.captured(1).toInt(), Oheight = matchO.captured(2).toInt();
+    int Nwidth = matchN.captured(1).toInt(), Nheight = matchN.captured(2).toInt();
 
-    return std::make_pair(result, originalSize);
+    auto* image = new QImage(reinterpret_cast<const uchar*>(sout.constData()), Nwidth, Nheight, Nwidth*3, QImage::Format_RGB888);
+
+    process.close();
+    return std::make_pair(image, QSize(Owidth, Oheight));
 }
