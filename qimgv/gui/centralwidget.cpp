@@ -41,6 +41,7 @@ void CentralWidget::setMode(ViewMode new_mode) {
         setSizes({0,val});
         if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
             documentView->viewWidget()->startPlayback();
+        documentView->setPanelEnabled(settings->panelEnabled());
         break;
     case MODE_FOLDERVIEW:
         documentView->viewWidget()->stopPlayback();
@@ -53,6 +54,8 @@ void CentralWidget::setMode(ViewMode new_mode) {
             this->restoreState(splitterState);
         if (mode != MODE_DOCUMENT && mode != MODE_SPLIT)
             documentView->viewWidget()->startPlayback();
+
+        documentView->setPanelEnabled(false);
         break;
     case MODE_INIT:
         assert(false);
