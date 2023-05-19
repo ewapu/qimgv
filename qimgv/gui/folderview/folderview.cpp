@@ -96,6 +96,10 @@ FolderView::FolderView(QWidget *parent) :
 
     connect(ui->splitter, &QSplitter::splitterMoved, this, &FolderView::onSplitterMoved);
 
+    connect(ui->pathLabel, &QLineEdit::editingFinished, this, [this]() {
+        emit directorySelected(ui->pathLabel->text());
+    });
+
     readSettings();
 
     QSizePolicy sp_retain = sizePolicy();

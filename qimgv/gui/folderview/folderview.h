@@ -6,6 +6,7 @@
 #include <QFileSystemModel>
 #include <QFileDialog>
 #include <QElapsedTimer>
+#include <QLineEdit>
 #include "gui/customwidgets/floatingwidgetcontainer.h"
 #include "gui/idirectoryview.h"
 #include "gui/folderview/foldergridview.h"

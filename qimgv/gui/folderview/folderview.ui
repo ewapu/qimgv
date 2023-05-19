@@ -137,10 +137,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="pathLabel">
-           <property name="cursor">
-            <cursorShape>IBeamCursor</cursorShape>
-           </property>
+          <widget class="QLineEdit" name="pathLabel">
            <property name="text">
             <string>[path]</string>
            </property>
