@@ -19,6 +19,8 @@ VideoPlayerInitProxy::VideoPlayerInitProxy(QWidget *parent)
 #ifdef _WIN32
     libDirs << QApplication::applicationDirPath() + "/plugins";
     libDirs << QApplication::applicationDirPath() + "/../plugins/player_mpv";
+    libDirs << QApplication::applicationDirPath() + "/../../plugins/player_mpv/cmake-build-debug";
+    libDirs << QApplication::applicationDirPath() + "/../../plugins/player_mpv/cmake-build-release";
 #else
     QDir libPath(QApplication::applicationDirPath() + "/../lib/qimgv");
     libDirs << (libPath.makeAbsolute() ? libPath.path() : ".") << "/usr/lib/qimgv" << "/usr/lib64/qimgv";

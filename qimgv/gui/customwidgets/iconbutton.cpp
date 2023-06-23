@@ -54,6 +54,7 @@ void IconButton::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void IconButton::mouseMoveEvent(QMouseEvent *event) {
+    event->ignore(); // propagate to parent
     if(mChecked || !mPressed)
         return;
     if(rect().contains(event->pos())) {

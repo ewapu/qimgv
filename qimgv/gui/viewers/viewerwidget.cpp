@@ -53,6 +53,7 @@ ViewerWidget::ViewerWidget(QWidget *parent)
     connect(videoControls, &VideoControlsProxyWrapper::seekBackward,  this, &ViewerWidget::seekBackward);
     connect(videoControls, &VideoControlsProxyWrapper::seekForward, this, &ViewerWidget::seekForward);
     connect(videoControls, &VideoControlsProxyWrapper::seek,      this, &ViewerWidget::seek);
+    connect(videoControls, &VideoControlsProxyWrapper::setVolume,      this, &ViewerWidget::setVolume);
 
     enableImageViewer();
     setInteractionEnabled(true);
@@ -283,6 +284,12 @@ void ViewerWidget::pauseResumePlayback() {
         videoPlayer.get()->pauseResume();
     else if(imageViewer->hasAnimation())
         imageViewer->pauseResume();
+}
+
+void ViewerWidget::setVolume(int pos) {
+    if(currentWidget == VIDEOPLAYER) {
+        videoPlayer.get()->setVolume(pos);
+    }
 }
 
 void ViewerWidget::seek(int pos) {

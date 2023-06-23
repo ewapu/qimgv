@@ -32,6 +32,16 @@ signals:
     void seek(int pos);
     void seekForward();
     void seekBackward();
+    void setVolume(int pos);
+
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+public:
+    QSize sizeHint() const override;
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void readSettings();
@@ -39,5 +49,8 @@ private slots:
 private:
     Ui::VideoControls *ui;
     int lastPosition;
+    QString durationString;
     PlaybackMode mode;
+
+    QString formatTimeString(int duration);
 };

@@ -15,6 +15,7 @@ void VideoSlider::mouseMoveEvent(QMouseEvent *event) {
         event->accept();
         setValueAtCursor(event->pos());
     }
+    event->ignore();
 }
 
 void VideoSlider::setValueAtCursor(QPoint pos) {

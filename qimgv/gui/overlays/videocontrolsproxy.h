@@ -26,6 +26,7 @@ signals:
     void seek(int pos);
     void seekForward();
     void seekBackward();
+    void setVolume(int pos);
 
 public slots:
     void setPlaybackDuration(int);
