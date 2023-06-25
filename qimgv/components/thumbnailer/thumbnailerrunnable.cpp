@@ -160,11 +160,6 @@ std::pair<QImage*, QSize> ThumbnailerRunnable::createThumbnail(QString path, con
 }
 
 std::pair<QImage*, QSize> ThumbnailerRunnable::createVideoThumbnail(QString path, int size, bool squared) {
-    QFileInfo fi(path);
-    QString tmpFilePath = settings->tmpDir() + fi.fileName() + ".png";
-    QString tmpFilePathEsc = tmpFilePath;
-    tmpFilePathEsc.replace("%", "%%");
-
     QProcess process;
     process.setProcessChannelMode(QProcess::SeparateChannels);
     QString vf = "--vf=scale=w=%size%:h=%size%:force_original_aspect_ratio=decrease:flags=fast_bilinear" +
@@ -217,8 +212,8 @@ std::pair<QImage*, QSize> ThumbnailerRunnable::createVideoThumbnail(QString path
     int Owidth = matchO.captured(1).toInt(), Oheight = matchO.captured(2).toInt();
     int Nwidth = matchN.captured(1).toInt(), Nheight = matchN.captured(2).toInt();
 
-    auto* image = new QImage(reinterpret_cast<const uchar*>(sout.constData()), Nwidth, Nheight, Nwidth*3, QImage::Format_RGB888);
+    QImage image(reinterpret_cast<const uchar*>(sout.constData()), Nwidth, Nheight, Nwidth*3, QImage::Format_RGB888);
 
     process.close();
-    return std::make_pair(image, QSize(Owidth, Oheight));
+    return std::make_pair(new QImage(image.copy()), QSize(Owidth, Oheight));
 }
