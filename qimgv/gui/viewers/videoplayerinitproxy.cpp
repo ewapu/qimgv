@@ -10,6 +10,8 @@ VideoPlayerInitProxy::VideoPlayerInitProxy(QWidget *parent)
     : VideoPlayer(parent),
       player(nullptr)
 {
+//    scaleMode = settings->imageFitMode();
+    scaleMode = 2;
     setAccessibleName("VideoPlayerInitProxy");
     setMouseTracking(true);
     layout.setContentsMargins(0,0,0,0);
@@ -34,7 +36,7 @@ void VideoPlayerInitProxy::onSettingsChanged() {
     if(!player)
         return;
     player->setMuted(!settings->playVideoSounds());
-    player->setVideoUnscaled(!settings->expandImage());
+    setScaleMode();
 }
 
 std::shared_ptr<VideoPlayer> VideoPlayerInitProxy::getPlayer() {
@@ -92,9 +94,31 @@ inline bool VideoPlayerInitProxy::initPlayer() {
     return true;
 }
 
+void VideoPlayerInitProxy::setScaleMode() {
+    if (!settings->expandImage())
+        player->setVideoUnscaled(true);
+    else
+        player->setVideoUnscaled(scaleMode == 2);
+}
+
+void VideoPlayerInitProxy::setFitOriginal() {
+    scaleMode = 2;
+    setScaleMode();
+}
+
+void VideoPlayerInitProxy::setFitWindow() {
+    scaleMode = 0;
+    setScaleMode();
+}
+
 bool VideoPlayerInitProxy::showVideo(QString file) {
     if(!initPlayer())
         return false;
+    if (!settings->keepFitMode()) {
+//        scaleMode = settings->imageFitMode();
+        scaleMode = 2;
+        setScaleMode();
+    }
     return player->showVideo(file);
 }
 

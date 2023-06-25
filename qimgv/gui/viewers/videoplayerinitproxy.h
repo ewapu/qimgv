@@ -38,6 +38,8 @@ public:
 public slots:
     void show();
     void hide();
+    virtual void setFitOriginal();
+    virtual void setFitWindow();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -52,10 +54,11 @@ private:
     QString libFile;
     QStringList libDirs;
 
+    void setScaleMode();
+    int scaleMode;
+
 private slots:
     void onSettingsChanged();
-
 signals:
     void playbackFinished();
-
 };

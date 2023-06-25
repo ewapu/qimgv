@@ -181,8 +181,10 @@ void ViewerWidget::setInteractionEnabled(bool mode) {
         connect(this, &ViewerWidget::scrollLeft,     imageViewer.get(), &ImageViewerV2::scrollLeft);
         connect(this, &ViewerWidget::scrollRight,    imageViewer.get(), &ImageViewerV2::scrollRight);
         connect(this, &ViewerWidget::fitWindow,      imageViewer.get(), &ImageViewerV2::setFitWindow);
-        connect(this, &ViewerWidget::fitWidth,       imageViewer.get(), &ImageViewerV2::setFitWidth);
+        connect(this, &ViewerWidget::fitWindow,      videoPlayer.get(), &VideoPlayerInitProxy::setFitWindow);
         connect(this, &ViewerWidget::fitOriginal,    imageViewer.get(), &ImageViewerV2::setFitOriginal);
+        connect(this, &ViewerWidget::fitOriginal,    videoPlayer.get(), &VideoPlayerInitProxy::setFitOriginal);
+        connect(this, &ViewerWidget::fitWidth,       imageViewer.get(), &ImageViewerV2::setFitWidth);
         connect(imageViewer.get(), &ImageViewerV2::draggedOut, this, &ViewerWidget::draggedOut);
         imageViewer->setAttribute(Qt::WA_TransparentForMouseEvents, false);
     } else {
